@@ -1,0 +1,40 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "build-go",
+        "type": "shell",
+        "command": "go build -o ${workspaceFolder}/bin/pantherfuzz-core${input:osExtension} ${workspaceFolder}/core/main.go",
+        "group": "build",
+        "problemMatcher": ["$go"],
+        "options": {
+          "cwd": "${workspaceFolder}/core"
+        }
+      },
+      {
+        "label": "run-python",
+        "type": "shell",
+        "command": "${workspaceFolder}/visualizer/venv/bin/python ${workspaceFolder}/visualizer/cli_reporter.py --input ${workspaceFolder}/bin/scan_results.json",
+        "windows": {
+          "command": "${workspaceFolder}/visualizer/venv/Scripts/python ${workspaceFolder}/visualizer/cli_reporter.py --input ${workspaceFolder}/bin/scan_results.json"
+        },
+        "dependsOn": ["build-go"],
+        "group": "test"
+      },
+      {
+        "label": "full-build",
+        "dependsOrder": "sequence",
+        "dependsOn": ["build-go", "run-python"],
+        "group": "none"
+      }
+    ],
+    "inputs": [
+      {
+        "id": "osExtension",
+        "type": "pickString",
+        "description": "Select OS for binary extension",
+        "options": ["", ".exe"],
+        "default": ""
+      }
+    ]
+  }
